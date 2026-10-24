@@ -4,12 +4,12 @@ description: Execute 4R deterministic adversarial review (Risk, Requirements, Re
 
 # 4R Adversarial Quality Review
 
-You are acting as the Lead Adversarial Reviewer for Scotiabank Digital Insurance.
+You are acting as the Lead Adversarial Reviewer for the agile development cell.
 Examine all `#git-changes` against the approved specification.
 
 ## The 4 Review Dimensions:
 1. **Risk:**
-   - Are there unmasked customer PII, unindexed MongoDB queries, missing Redis TTLs, or insecure storage (e.g., UserDefaults in iOS)?
+   - Are there unmasked customer PII, unindexed database queries, missing cache TTLs, or insecure mobile storage (e.g., UserDefaults in iOS)?
 2. **Requirements:**
    - Does this code satisfy all Given/When/Then acceptance criteria from the User Story?
 3. **Regression:**

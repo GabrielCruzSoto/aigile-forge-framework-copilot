@@ -1,13 +1,13 @@
 #!/usr/bin/env bash
 # ==============================================================================
 # Script: aff-secret-scan.sh
-# Purpose: Pre-commit / pre-push guardrail scanner for Scotiabank Digital Insurance
-#          Blocks customer PII, real policy numbers, credit card PANs and keys.
+# Purpose: Pre-commit / pre-push guardrail scanner for enterprise cells
+#          Blocks customer PII, unmasked credit card PANs, keys and credentials.
 # ==============================================================================
 
 set -euo pipefail
 
-echo "==> [AFF-M Scanner] Inspecting changes for banking security compliance..."
+echo "==> [AFF-Copilot Scanner] Inspecting changes for security compliance..."
 
 EXIT_CODE=0
 
@@ -29,16 +29,16 @@ else
     echo "  [OK] No plain credit card numbers found."
 fi
 
-# 3. Check for obvious hardcoded banking passwords
+# 3. Check for obvious hardcoded passwords
 echo "  [3/3] Scanning for hardcoded passwords in configuration..."
 if grep -r -E -i -n --exclude-dir={.git,node_modules,target,build,dist,.idea,.vscode} 'password\s*=\s*["\x27][^"\x27]{6,}["\x27]' . 2>/dev/null; then
     echo "  [WARN] Potential hardcoded password detected. Verify it is a placeholder."
 fi
 
 if [ "$EXIT_CODE" -ne 0 ]; then
-    echo "==> [AFF-M Scanner] Banking security scan FAILED. Fix issues before commit." >&2
+    echo "==> [AFF-Copilot Scanner] Security scan FAILED. Fix issues before commit." >&2
     exit 1
 fi
 
-echo "==> [AFF-M Scanner] All banking guardrails verified clean."
+echo "==> [AFF-Copilot Scanner] All security guardrails verified clean."
 exit 0

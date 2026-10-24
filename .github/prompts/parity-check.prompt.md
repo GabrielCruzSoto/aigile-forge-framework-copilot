@@ -8,11 +8,11 @@ Compare the client implementations in `@workspace` against `contract.md`.
 
 ## Verification Dimensions:
 1. **JSON Payload Parity:**
-   - Are the property keys identical (camelCase) across all three client apps?
+   - Are the property keys identical (camelCase) across all client apps?
 2. **Validation Logic:**
-   - Are client-side form validation rules (e.g., RUT checksum, email pattern, phone length) identical?
-3. **Zero Premium Logic:**
-   - Confirm that neither Android nor iOS contains local insurance premium calculation logic.
+   - Are client-side form validation rules (e.g., ID checksum, email pattern, phone length) identical?
+3. **Zero Core Domain Logic:**
+   - Confirm that neither Android nor iOS contains local core business/pricing calculation logic.
 4. **Error Code Mapping:**
    - Are HTTP 4xx/5xx errors mapped to consistent user messages across all platforms?
 

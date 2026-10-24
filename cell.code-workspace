@@ -1,0 +1,35 @@
+{
+  "folders": [
+    {
+      "name": "00-Cell-Hub [Governance & Knowledge]",
+      "path": "."
+    },
+    {
+      "name": "Backend-Service-Main [Backend API]",
+      "path": "../backend-service-main"
+    },
+    {
+      "name": "Backend-Service-Secondary [Backend Worker/API]",
+      "path": "../backend-service-secondary"
+    },
+    {
+      "name": "Frontend-Web [Web Application]",
+      "path": "../frontend-web"
+    },
+    {
+      "name": "Mobile-Android [Android App]",
+      "path": "../mobile-android"
+    },
+    {
+      "name": "Mobile-iOS [iOS App]",
+      "path": "../mobile-ios"
+    }
+  ],
+  "settings": {
+    "files.exclude": {
+      "**/.git": false,
+      "**/.DS_Store": true
+    },
+    "github.copilot.chat.localeOverride": "en"
+  }
+}

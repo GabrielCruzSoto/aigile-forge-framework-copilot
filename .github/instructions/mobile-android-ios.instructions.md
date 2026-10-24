@@ -4,12 +4,12 @@ applyTo: "**/*.{kt,xml,swift,m,h}"
 
 # Mobile Native Instructions (Android Kotlin & iOS Swift)
 
-## Multi-Channel Paridad Rules
-1. **Zero Premium Calculation on Clients:**
-   - Calculation of insurance rates, coverage amounts, and premium totals must ALWAYS be evaluated by backend microservices.
-   - Client apps are responsible only for displaying backend values and submitting customer choices.
+## Multi-Channel Parity Rules
+1. **Zero Core Domain Calculation on Clients:**
+   - Calculation of core business rules, fees, pricing, and transactional totals must ALWAYS be evaluated by backend services.
+   - Client applications are responsible only for displaying backend values and submitting user choices.
 2. **Field Parity:**
-   - JSON payload property names and error codes must match 1:1 with Web Angular contracts.
+   - JSON payload property names and error codes must match 1:1 with Web contracts.
 
 ## Android Native Standards (Kotlin)
 - Architecture: MVVM + Repository pattern with Clean Architecture separation.

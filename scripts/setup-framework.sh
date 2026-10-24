@@ -2,7 +2,7 @@
 # ==============================================================================
 # Script: setup-framework.sh
 # Purpose: Configure local Multi-Root Workspace and .git/info/exclude
-#          Ensures zero footprint on Bitbucket Enterprise Server during Phase 0/1.
+#          Ensures zero footprint on remote repositories during Phase 0/1.
 # ==============================================================================
 
 set -euo pipefail
@@ -10,10 +10,10 @@ set -euo pipefail
 BASE_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 cd "$BASE_DIR"
 
-echo "==> [AFF-M] Initializing Multi-Root Workspace layout..."
+echo "==> [AFF-Copilot] Initializing Multi-Root Workspace layout..."
 
 # 1. Create required directories
-mkdir -p sprints work archive templates knowledge/architecture
+mkdir -p sprints work archive templates knowledge/{team,business,architecture}
 
 # 2. Configure .git/info/exclude in local git repository
 if [ -d ".git" ]; then
@@ -24,12 +24,13 @@ if [ -d ".git" ]; then
     grep -q "sprints/" .git/info/exclude 2>/dev/null || echo "sprints/" >> .git/info/exclude
 fi
 
-# 3. Verify the-last-of-code.code-workspace
-if [ -f "the-last-of-code.code-workspace" ]; then
-    echo "  [OK] Multi-Root Workspace file verified: the-last-of-code.code-workspace"
+# 3. Verify cell.code-workspace
+if [ -f "cell.code-workspace" ]; then
+    echo "  [OK] Multi-Root Workspace file verified: cell.code-workspace"
 else
-    echo "  [WARN] the-last-of-code.code-workspace is missing."
+    echo "  [WARN] cell.code-workspace is missing."
 fi
 
-echo "==> [AFF-M] Setup completed successfully."
-echo "    Open the-last-of-code.code-workspace in VS Code to activate Copilot agents."
+echo "==> [AFF-Copilot] Setup completed successfully."
+echo "    Open cell.code-workspace in VS Code to activate Copilot agents."
+echo "    Run prompt /init-cell with agent @aff-onboarding to configure your cell context."

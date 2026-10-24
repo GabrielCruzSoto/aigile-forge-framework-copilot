@@ -1,85 +1,103 @@
-# Aigile Forge Framework — Copilot Edition (AFF-M)
-## Framework Declarativo de Ingeniería de Software Asistida por IA para Mobdev–Scotiabank (Célula "The Last of Code" · Seguros Digitales)
+# Aigile Forge Framework — Copilot Declarative Edition (AFF-Copilot)
+## Framework Declarativo de Ingeniería de Software Asistida por IA para Células Ágiles Empresariales
 
 **Versión:** 1.0.0  
-**Cliente:** Scotiabank  
-**Proveedor:** Mobdev  
-**Harness Base:** VS Code Multi-Root Workspace + GitHub Copilot Business (100% Declarativo)
+**Harness Base:** Visual Studio Code Multi-Root Workspace + GitHub Copilot Business (100% Declarativo)
 
 ---
 
 ## 1. Visión General y Propósito
 
-**AFF-M** es la edición especializada de Aigile Forge Framework concebida para la célula de Seguros Digitales ("The Last of Code"), administrada directamente por **Scotiabank**. 
+**AFF-Copilot** es un framework de ingeniería de software asistida por IA diseñado para células ágiles que desarrollan soluciones multi-repositorio (Backend, Web y Aplicaciones Móviles) en entornos corporativos y regulados.
 
-Diseñado específicamente para operar en entornos corporativos y altamente regulados bajo estrictas políticas de InfoSec y DevOps bancario, este framework se implementa de manera **100% declarativa** aprovechando las capacidades nativas de **GitHub Copilot en Visual Studio Code** (`.github/copilot-instructions.md`, `*.instructions.md`, `*.prompt.md`, `*.agent.md`, `@workspace`), **sin requerir servidores MCP, binarios externos ni daemons locales**.
+El framework es **100% agnóstico de empresa, negocio y equipo**. En lugar de requerir configuraciones estáticas cableadas a mano, incorpora un **Agente Inicial de Onboarding (`@aff-onboarding`)** que permite a cualquier célula levantar y configurar su contexto operativo en minutos.
+
+Opera de forma **completamente declarativa** utilizando las capacidades nativas de **GitHub Copilot en VS Code** (`.github/copilot-instructions.md`, `*.instructions.md`, `*.prompt.md`, `*.agent.md`, `@workspace`), **sin requerir servidores MCP, daemons de fondo ni binarios externos**.
 
 ### Pilares de Arquitectura
-1. **Cero Huella Remota en Bitbucket Server (Fases 0 y 1):** Utiliza un espacio de trabajo Multi-Root (`the-last-of-code.code-workspace`) donde la primera raíz alberga la configuración del framework, mientras que las reglas locales de `.git/info/exclude` previenen que cualquier archivo temporal de IA se suba a Bitbucket Enterprise Server sin autorización formal.
-2. **Paridad Multi-Canal Absoluta (1:1):** Garantiza coherencia total entre el portal **Web (Angular)** y las aplicaciones nativas **Android (Kotlin)** e **iOS (Swift)**, prohibiendo el cálculo de primas en los dispositivos cliente y sincronizando payloads JSON y códigos de error.
-3. **Elicitación Estructurada Bilingüe (ES / EN):** Aborda el problema de tareas de Jira que nacen "solo con título", generando hipótesis técnicas y un máximo de 10 preguntas P1 con opción por defecto para refinamientos y planning.
-4. **Revisión Determinista 4R con Refutador:** Aplica el protocolo de calidad *Risk, Requirements, Regression, Resilience* con una segunda pasada adversarial para descartar falsos positivos antes de bloquear Pull Requests.
-5. **Guardrails Bancarios Mandatorios:** Bloqueo de PII (RUTs, nombres, números de póliza reales), consultas indexadas obligatorias en MongoDB, `TTL` obligatorio en Redis y verificación previa de etapas de `Jenkinsfile`.
+1. **Agente Inicial de Onboarding (`@aff-onboarding`):** Construye dinámicamente todo el contexto de la célula: nombre del equipo, roster de integrantes, información de la empresa, dominio del negocio, mapa de arquitectura/infraestructura y protocolos de trabajo.
+2. **Cero Huella Remota Inicial (Fases 0 y 1):** Utiliza un espacio de trabajo Multi-Root (`cell.code-workspace`) donde las reglas locales de `.git/info/exclude` evitan contaminar los repositorios remotos con configuraciones locales del framework durante las fases iniciales de adopción.
+3. **Paridad Multi-Canal (1:1):** Asegura coherencia total de contratos, validaciones y códigos de error entre el frontend Web y las aplicaciones Mobile Nativas (Android e iOS), prohibiendo el cálculo de reglas de negocio críticas en los clientes.
+4. **Elicitación Estructurada Bilingüe (ES / EN):** Desambigua historias de usuario y tareas técnicas que nacen con descripciones incompletas, formulando hipótesis y un máximo de 10 preguntas P1 con opciones por defecto para ceremonias ágiles.
+5. **Revisión Determinista 4R con Refutador:** Aplica el protocolo de calidad *Risk, Requirements, Regression, Resilience* con una segunda pasada adversarial para validar hallazgos antes de abrir Pull Requests.
+6. **Guardrails de Datos y Seguridad:** Cero fuga de PII en logs y memoria, índices obligatorios en bases de datos y TTLs mandatorios en capas de cache.
 
 ---
 
-## 2. Protocolo de Fases y Gates Bancarios
+## 2. Onboarding: Cómo Armar el Contexto de tu Célula
+
+Al abrir este framework por primera vez, el **Agente de Onboarding** te guiará para estructurar el contexto de tu equipo:
+
+1. **Abrir el workspace en VS Code:**
+   ```bash
+   code cell.code-workspace
+   ```
+2. **Invocar al agente en Copilot Chat:**
+   ```text
+   @aff-onboarding /init-cell
+   ```
+3. **Completar las 6 dimensiones guiadas:**
+   - **Nombre e Identidad del Equipo:** Nombre de la célula, slug y repositorios.
+   - **Personal del Equipo:** Roster de integrantes (Líder Técnico, PO, Devs Backend/Frontend/Mobile, QA).
+   - **Información de la Empresa:** Empresa cliente, regulaciones, hosting de repositorios y gestor de tareas.
+   - **Información del Negocio:** Dominio funcional, glosario de términos clave y objetivos del producto.
+   - **Arquitectura y Stack:** Catálogo de microservicios, bases de datos, cache y pipelines de CI/CD.
+   - **Forma de Trabajo (Ways of Working):** Ceremonias, duración del sprint, estrategia de ramas (GitFlow/Trunk) y Gates de aprobación.
+
+El agente poblará automáticamente `cell.config.yaml`, `knowledge/` y generará la instrucción contextual `.github/instructions/cell-context.instructions.md`.
+
+---
+
+## 3. Protocolo de Fases y Gates de la Célula
 
 ```text
 [Sprint Planning / Refinamiento] ──> [/elicit-ticket] ──> [/answers-to-spec] ──> [Gate G1: DoR]
                                                                                      │
 [Gate G2: Contrato/Paridad] <── [/design & /sync-mobile-web-parity] <────────────────┘
        │
-       └──> [Implementación TDD en Repos] ──> [/review-4r & /review-refuter] ──> [Gate G3: PR Bitbucket]
+       └──> [Implementación TDD en Repos] ──> [/review-4r & /review-refuter] ──> [Gate G3: PR]
                                                                                      │
-[Sprint Review Demo] <── [/generate-receipt] <── [Gate G4: Jenkins & Argo CD] <──────┘
+[Sprint Review Demo] <── [/generate-receipt] <── [Gate G4: CI/CD & Deploy] <─────────┘
 ```
 
-### Gates Humanos del Banco
-- **G1 (Definition of Ready - DoR):** El Product Owner del banco confirma los criterios de negocio y responde preguntas P1. El Líder Técnico valida que la `spec.md` no tenga criterios en estado `HIPOTESIS` para la tarea a iniciar.
-- **G2 (Contrato y Paridad de Canales):** Aprobación del `contract.md` y verificación de compatibilidad 1:1 entre Angular, Android e iOS antes de comenzar desarrollo de UI.
-- **G3 (Aprobación de Pull Request en Bitbucket Server):** Revisión humana del PR acompañada por veredicto favorable de `/review-4r` y pipeline de Jenkins en verde.
-- **G4 (Promoción y Despliegue):** Aprobación de paso a ambientes IST/UAT y Producción ejecutada por DevOps mediante Jenkins y Argo CD.
+### Gates de Aprobación
+- **G1 (Definition of Ready - DoR):** El Product Owner valida criterios de negocio y responde preguntas P1; el Líder Técnico confirma viabilidad técnica.
+- **G2 (Contrato y Paridad de Canales):** Aprobación de `contract.md` y verificación de compatibilidad 1:1 entre Web y Mobile antes del desarrollo de interfaz.
+- **G3 (Aprobación de Pull Request):** Revisión humana del PR acompañada por veredicto favorable de `/review-4r` y pipeline de CI en verde.
+- **G4 (Pase a Ambientes / Producción):** Despliegue verificado por DevOps y el equipo técnico.
 
 ---
 
-## 3. Catálogo de Agentes Declarativos (.github/agents/)
+## 4. Catálogo de Agentes Declarativos (.github/agents/)
 
 | Custom Agent | Slash Command Principal | Propósito Específico |
 |---|---|---|
-| **`aff-orchestrator`** | `/aff-intake`, `/checkpoint`, `/resume` | Gobernar jerarquía Sprint → HU → Tareas y mantener `state.yaml`. |
-| **`aff-pm`** | `/elicit-ticket`, `/prepare-review` | Elicitar requerimientos en ES/EN y preparar el guion de demo de Sprint Review. |
-| **`aff-analyst`** | `/answers-to-spec`, `/hu-to-tasks` | Hidratar tareas de Jira y clasificar criterios (Hipótesis/Confirmado/Validado). |
-| **`aff-architect`** | `/contract-first`, `/sync-mobile-web-parity` | Diseñar contratos REST, esquemas MongoDB, claves Redis y paridad móvil. |
-| **`aff-security`** | `/security-check`, `/jenkins-pr-check` | Auditar cumplimiento OWASP, cero PII, índices de BD y stages de Jenkins. |
-| **`aff-qa`** | `/test-plan`, `/generate-receipt` | Elaborar planes de prueba y consolidar evidencias multi-canal. |
-| **`aff-curator`** | `/bootstrap-knowledge`, `/drift-check` | Mantener sincronizada la base de conocimiento y `AGENTS.md`. |
-| **`aff-planner`** | `/plan-tasks` | Desglosar tareas en unidades atómicas (≤ 400 líneas). |
+| **`aff-onboarding`** | `/init-cell` | **Agente Inicial:** Construye interactivamente el contexto de la célula. |
+| **`aff-orchestrator`** | `/aff-intake`, `/checkpoint`, `/resume` | Gobierna jerarquía Sprint → HU → Tareas y mantiene `state.yaml`. |
+| **`aff-pm`** | `/elicit-ticket`, `/prepare-review` | Elicita requerimientos en ES/EN y prepara el guion de Sprint Review. |
+| **`aff-analyst`** | `/answers-to-spec`, `/hu-to-tasks` | Hidrata tareas técnicas y clasifica criterios de aceptación (DoR). |
+| **`aff-architect`** | `/contract-first`, `/sync-mobile-web-parity` | Diseña contratos REST, persistencia, cache y valida paridad multi-canal. |
+| **`aff-security`** | `/security-check` | Audita OWASP, cero PII, índices en BD y configuración de seguridad. |
+| **`aff-qa`** | `/test-plan`, `/generate-receipt` | Elabora planes de prueba y consolida evidencias de calidad. |
+| **`aff-curator`** | `/bootstrap-knowledge`, `/drift-check` | Mantiene sincronizada la base de conocimiento y `AGENTS.md`. |
+| **`aff-planner`** | `/plan-tasks` | Desglosa tareas en unidades atómicas de implementación (≤ 400 líneas). |
 | **`aff-implementer`** | `/implement-next` | Ciclo TDD estricto (Red-Green-Refactor) en la rama local. |
 | **`aff-reviewer`** | `/review-4r`, `/review-refuter` | Revisión adversarial 4R y refutación de falsos positivos. |
 
 ---
 
-## 4. Estructura del Workspace Multi-Root
-
-Abrir `the-last-of-code.code-workspace` en VS Code para vincular:
-1. `cell-hub-the-last-of-code` (gobernanza, conocimiento y `.github/`).
-2. Repositorios de microservicios backend Java / Kotlin.
-3. Repositorio frontend web Angular.
-4. Repositorio app móvil Android (Kotlin).
-5. Repositorio app móvil iOS (Swift).
-
----
-
-## 5. Setup y Puesta en Marcha
+## 5. Puesta en Marcha Local
 
 ```bash
-# 1. Verificar herramientas de compilación y extensiones de VS Code
+# 1. Verificar herramientas de desarrollo y extensiones de VS Code
 ./scripts/install-dependencies.sh
 
 # 2. Configurar exclusiones locales (.git/info/exclude) y Multi-Root
 ./scripts/setup-framework.sh
 
-# 3. Validar seguridad pre-commit
+# 3. Abrir el workspace multi-root en VS Code
+code cell.code-workspace
+
+# 4. Validar seguridad pre-commit
 ./scripts/aff-secret-scan.sh
 ```

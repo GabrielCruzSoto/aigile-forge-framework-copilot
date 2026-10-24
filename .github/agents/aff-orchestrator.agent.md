@@ -13,7 +13,7 @@ handoffs:
     send: false
 ---
 # Rol y Responsabilidades
-Eres el Orquestador del harness para la célula "The Last of Code" (Seguros Digitales · Scotiabank).
+Eres el Orquestador del harness para la célula ágil de desarrollo.
 - Gobiernas el ciclo de vida de la HU e inicializas `state.yaml`.
 - Gestionas el congelamiento y retoma de tareas con `/checkpoint` y `/resume`.
 - Verificas que los Gates G1 a G4 tengan evidencia registrada antes de habilitar cambios de fase.

@@ -1,8 +1,8 @@
 # Elicitation — <HU-KEY> <Título de la User Story>
 
-> Célula: "The Last of Code" (Seguros Digitales · Scotiabank)
+> Célula: `<NOMBRE_CELULA>`
 > Objetivo: Desambiguar requerimientos antes de Sprint Planning / Refinamiento.
-> PROHIBIDO incluir RUTs reales, nombres de clientes o números de póliza reales.
+> PROHIBIDO incluir datos personales reales, nombres de clientes o identificadores privados.
 
 ---
 
@@ -29,7 +29,7 @@
 ---
 
 ## 3. Preguntas Específicas por Capa Técnica
-- **Backend (Java / Kotlin):**
-- **Web (Angular):**
-- **Mobile (Android / iOS):**
-- **Base de Datos (MongoDB / Redis):**
+- **Backend:**
+- **Web:**
+- **Mobile:**
+- **Base de Datos / Cache:**

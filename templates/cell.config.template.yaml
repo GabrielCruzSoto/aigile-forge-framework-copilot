@@ -1,0 +1,74 @@
+version: "1.0.0"
+
+cell:
+  id: "cell-slug"
+  name: "Nombre de la Célula"
+  description: "Propósito y alcance general del equipo"
+
+company:
+  client_name: "Empresa Cliente"
+  organization: "Organización / Área"
+  compliance_level: "High / Standard / Regulated"
+  vcs_provider: "Bitbucket Server / GitLab / GitHub"
+  ci_provider: "Jenkins / GitHub Actions / GitLab CI"
+  ticket_manager: "Jira / Monday / Azure DevOps"
+
+business:
+  domain: "Dominio funcional principal"
+  target_users:
+    - "Tipo de usuario 1"
+    - "Tipo de usuario 2"
+  core_glossary_ref: "knowledge/business/glossary.md"
+
+team:
+  lead_architect: "Nombre del Líder Técnico"
+  product_owner: "Nombre del Product Owner"
+  scrum_master: "Nombre del Scrum Master"
+  members:
+    - name: "Dev 1"
+      role: "Backend Lead"
+      layer: "backend"
+    - name: "Dev 2"
+      role: "Frontend Lead"
+      layer: "frontend"
+    - name: "Dev 3"
+      role: "Mobile Specialist"
+      layer: "mobile"
+    - name: "QA 1"
+      role: "QA Automation"
+      layer: "qa"
+
+architecture:
+  layers:
+    - backend
+    - frontend
+    - mobile
+  repositories:
+    - id: "backend-service-main"
+      name: "Backend Principal"
+      stack: "Java 21 / Spring Boot 3.x"
+      role: "Core API"
+    - id: "frontend-web"
+      name: "Frontend Web"
+      stack: "Angular 18+"
+      role: "Web Portal"
+    - id: "mobile-android"
+      name: "App Android"
+      stack: "Kotlin / Jetpack"
+      role: "Android Client"
+    - id: "mobile-ios"
+      name: "App iOS"
+      stack: "Swift / SwiftUI"
+      role: "iOS Client"
+
+workflow:
+  sprint_weeks: 2
+  branching_model: "GitFlow" # GitFlow | Trunk-Based
+  protected_branches:
+    - main
+    - develop
+  gates:
+    g1: "DoR (Definition of Ready) aprobado por PO y Líder"
+    g2: "Contratos de integración y paridad multi-canal confirmados"
+    g3: "Pull Request verificado con revisión 4R y CI passing"
+    g4: "Pase a ambientes de QA / Producción"

@@ -1,7 +1,7 @@
 # spec.md — <HU-KEY> <Título>
 
 > Versión: `v0.1` | Estado Global: `BORRADOR`
-> Célula: "The Last of Code" (Seguros Digitales · Scotiabank)
+> Célula: `<NOMBRE_CELULA>`
 
 ---
 
@@ -25,14 +25,14 @@
 - **Estado:** `[HIPOTESIS | CONFIRMADO | VALIDADO]`
 - **Origen:** `Q1 (elicitation.md)`
 - **Escenario Gherkin:**
-  - **Given** el cliente se encuentra autenticado en el portal web o app móvil
-  - **When** solicita la cotización de un seguro
-  - **Then** el sistema retorna el monto de la prima calculado por el microservicio backend
+  - **Given** el usuario se encuentra autenticado en el portal web o app móvil
+  - **When** ejecuta la acción de negocio
+  - **Then** el sistema procesa la solicitud mediante el backend y responde con el resultado esperado
 
 ---
 
 ## 4. Matriz de Paridad Multi-Canal
-| Campo / Regla | Web Angular | Android (Kotlin) | iOS (Swift) | ¿Paridad 1:1? |
+| Campo / Regla | Web | Android | iOS | ¿Paridad 1:1? |
 |---|---|---|---|---|
-| Cálculo de Prima | Solo muestra | Solo muestra | Solo muestra | Sí (Backend) |
-| Código de Error | `ERR_INS_001` | `ERR_INS_001` | `ERR_INS_001` | Sí |
+| Regla de Validación | Backend | Backend | Backend | Sí (Backend) |
+| Código de Error | `ERR_CODE_001` | `ERR_CODE_001` | `ERR_CODE_001` | Sí |
