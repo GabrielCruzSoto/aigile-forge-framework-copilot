@@ -86,7 +86,26 @@ El agente poblará automáticamente `cell.config.yaml`, `knowledge/` y generará
 
 ---
 
-## 5. Puesta en Marcha Local
+## 5. Catálogo de Agent Skills (`skills/` y `.github/skills/`)
+
+Para asegurar que los agentes no improvisen sus entregables, cada uno cuenta con una **Agent Skill procedimental** que detalla entradas, metodología paso a paso y criterios de verificación:
+
+| Skill | Agente Ejecutor | Entregable que Construye | Metodología Paso a Paso |
+|---|---|---|---|
+| **`cell-onboarding-bootstrap`** | `aff-onboarding` | `cell.config.yaml`, `knowledge/**` | Entrevista guiada de 6 dimensiones y generación de contexto. |
+| **`bilingual-elicitation`** | `aff-pm` | `elicitation.md` | Hipótesis y máx 10 preguntas P1 (ES/EN) con opción por defecto. |
+| **`spec-crafting-hydration`** | `aff-analyst` | `spec.md`, `task-cards/*.md` | Criterios Given/When/Then con madurez e hidratación con DoR. |
+| **`contract-first-design`** | `aff-architect` | `contract.md`, `design.md` | Schemas OpenAPI, mocks sintéticos y compatibilidad N/N-1. |
+| **`multi-channel-parity`** | `aff-architect`, `aff-qa` | `contract.md#parity` | Auditoría de coherencia 1:1 entre Web, Android e iOS. |
+| **`adversarial-review-4r`** | `aff-reviewer` | `review.md` | Revisión en 4 dimensiones (Risk, Req, Reg, Res) y refutador. |
+| **`work-unit-tdd`** | `aff-planner`, `aff-implementer` | `tasks.md`, código + tests | Unidades ≤ 400 líneas, ciclo Red-Green-Refactor y commits. |
+| **`test-evidence-receipts`** | `aff-qa` | `test-plan.md`, `evidence.md` | Trazabilidad 1:1 y certificado consolidado de pruebas (Receipt). |
+| **`enterprise-security-audit`** | `aff-security` | `security-review.md` | Cero PII, índices en BD, TTL en cache y Keystore/Keychain. |
+| **`checkpoint-resume`** | `aff-orchestrator` | `state.yaml#checkpoint` | Congelamiento en < 30s con commit temporal y retoma con rebase. |
+
+---
+
+## 6. Puesta en Marcha Local
 
 ```bash
 # 1. Verificar herramientas de desarrollo y extensiones de VS Code
