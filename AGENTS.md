@@ -25,9 +25,9 @@
 | **`aff-architect`** | `aff-architect.agent.md` | No | Define `contract.md` y valida paridad 1:1 entre Web y Mobile. | `contract-first-design`, `multi-channel-parity` |
 | **`aff-security`** | `aff-security.agent.md` | No | Audita OWASP, cero PII, índices en BD y stages de CI/CD. | `enterprise-security-audit` |
 | **`aff-qa`** | `aff-qa.agent.md` | No | Construye `test-plan.md` y consolida evidencia multi-canal. | `test-evidence-receipts`, `multi-channel-parity` |
-| **`aff-curator`** | `aff-curator.agent.md` | No | Sincroniza `knowledge/` y `.github/instructions/`. | `cell-onboarding-bootstrap` |
+| **`aff-curator`** | `aff-curator.agent.md` | No | Knowledge Curator: sincroniza `knowledge/` y audita drift documental. | `knowledge-curation` |
 | **`aff-planner`** | `aff-planner.agent.md` | No | Planifica unidades atómicas de trabajo (≤ 400 líneas). | `work-unit-tdd` |
-| **`aff-implementer`** | `aff-implementer.agent.md` | Sí | Codifica test-first siguiendo instrucciones del stack técnico. | `work-unit-tdd` |
+| **`aff-implementer`** | `aff-implementer.agent.md` | Sí | Codifica test-first, resuelve bugs con RCA y documenta PRs. | `work-unit-tdd`, `incident-rca-debugging`, `pull-request-documentation` |
 | **`aff-reviewer`** | `aff-reviewer.agent.md` | No | Ejecuta revisión adversarial 4R (*Risk, Req, Reg, Res*). | `adversarial-review-4r` |
 
 ---
@@ -45,8 +45,11 @@ Cada skill define la **metodología procedimental, entradas, pasos y salidas ver
 | **`multi-channel-parity`** | `aff-architect`, `aff-qa` | `contract.md#parity` | Checklist y matriz de verificación 1:1 entre Web, Android e iOS. |
 | **`adversarial-review-4r`** | `aff-reviewer` | `review.md` | Ejecución de las 4 dimensiones (Risk, Req, Reg, Res) y refutador de falsos positivos. |
 | **`work-unit-tdd`** | `aff-planner`, `aff-implementer` | `tasks.md`, código + tests | Descomposición en unidades ≤ 400 líneas, ciclo Red-Green-Refactor y commits. |
+| **`incident-rca-debugging`** | `aff-implementer`, `aff-analyst` | `rca.md`, test rojo | Protocolo metódico de aislamiento en logs, test rojo reproductor y 5 Porqués. |
+| **`pull-request-documentation`** | `aff-implementer`, `aff-reviewer` | `pr.md` | Confección de PRs trazables con impacto, notas de release y plan de rollback. |
 | **`test-evidence-receipts`** | `aff-qa` | `test-plan.md`, `evidence.md` | Matriz de trazabilidad 1:1 de pruebas y consolidación de certificado RDD (Receipt). |
 | **`enterprise-security-audit`** | `aff-security` | `security-review.md` | Clasificación de datos, detección de PII, índices en BD, TTL en cache y Keystore/Keychain. |
+| **`knowledge-curation`** | `aff-curator` | `drift-report.md`, ADRs | Protocolo de auditoría de drift código vs docs, poda de obsoletos y ADRs. |
 | **`checkpoint-resume`** | `aff-orchestrator` | `state.yaml#checkpoint` | Protocolo de congelamiento en < 30s con commit temporal y retoma con rebase. |
 
 ---

@@ -99,8 +99,11 @@ Para asegurar que los agentes no improvisen sus entregables, cada uno cuenta con
 | **`multi-channel-parity`** | `aff-architect`, `aff-qa` | `contract.md#parity` | Auditoría de coherencia 1:1 entre Web, Android e iOS. |
 | **`adversarial-review-4r`** | `aff-reviewer` | `review.md` | Revisión en 4 dimensiones (Risk, Req, Reg, Res) y refutador. |
 | **`work-unit-tdd`** | `aff-planner`, `aff-implementer` | `tasks.md`, código + tests | Unidades ≤ 400 líneas, ciclo Red-Green-Refactor y commits. |
+| **`incident-rca-debugging`** | `aff-implementer`, `aff-analyst` | `rca.md`, test rojo | Protocolo de aislamiento en logs, test rojo y los 5 Porqués. |
+| **`pull-request-documentation`** | `aff-implementer`, `aff-reviewer` | `pr.md` | Confección de PRs trazables con impacto, release notes y rollback. |
 | **`test-evidence-receipts`** | `aff-qa` | `test-plan.md`, `evidence.md` | Trazabilidad 1:1 y certificado consolidado de pruebas (Receipt). |
 | **`enterprise-security-audit`** | `aff-security` | `security-review.md` | Cero PII, índices en BD, TTL en cache y Keystore/Keychain. |
+| **`knowledge-curation`** | `aff-curator` | `drift-report.md`, ADRs | Protocolo de Knowledge Curation, poda de obsoletos y ADRs. |
 | **`checkpoint-resume`** | `aff-orchestrator` | `state.yaml#checkpoint` | Congelamiento en < 30s con commit temporal y retoma con rebase. |
 
 ---
