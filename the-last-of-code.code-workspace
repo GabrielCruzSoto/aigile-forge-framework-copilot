@@ -1,0 +1,35 @@
+{
+  "folders": [
+    {
+      "name": "00-Cell-Hub [Governance & Knowledge]",
+      "path": "."
+    },
+    {
+      "name": "Backend-Quotation-Service [Kotlin/Spring]",
+      "path": "../be-quotation-service"
+    },
+    {
+      "name": "Backend-Policy-Service [Java/Spring]",
+      "path": "../be-policy-service"
+    },
+    {
+      "name": "Frontend-Web-Portal [Angular]",
+      "path": "../fe-seguros-angular"
+    },
+    {
+      "name": "Mobile-Android-App [Kotlin]",
+      "path": "../app-seguros-android"
+    },
+    {
+      "name": "Mobile-iOS-App [Swift]",
+      "path": "../app-seguros-ios"
+    }
+  ],
+  "settings": {
+    "files.exclude": {
+      "**/.git": false,
+      "**/.DS_Store": true
+    },
+    "github.copilot.chat.localeOverride": "en"
+  }
+}
