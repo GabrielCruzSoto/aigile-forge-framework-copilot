@@ -2,7 +2,9 @@
 ## Framework Declarativo de Ingeniería de Software Asistida por IA para Células Ágiles Empresariales
 
 **Versión:** 1.0.0  
-**Harness Base:** Visual Studio Code Multi-Root Workspace + GitHub Copilot Business (100% Declarativo)
+**Harness Base:** Visual Studio Code Multi-Root Workspace + GitHub Copilot Business (100% Declarativo)  
+**Idioma:** Español | [English Version (README.en.md)](README.en.md)  
+**Documentación Completa:** [Portal de Documentación (docs/es/index.md)](docs/es/index.md)
 
 ---
 
@@ -135,3 +137,17 @@ code cell.code-workspace
 - **Qué sube:** `knowledge/`, `work/`, `sprints/`, `templates/`, `cell.config.yaml` y docs raíz.
 - **Qué excluye:** `.git/`, repositorios de código, `node_modules/`, binarios y temporales.
 - **Mecanismo:** Un hook Git `post-commit` dispara [`sync-onedrive.sh`](file:///home/gabrielcruzsoto/Proyectos/Tools_Agents/projects/aigile-forge-framework-copilot/scripts/sync-onedrive.sh) en segundo plano tras cada commit en el hub.
+
+---
+
+## 7. Índice de Documentación Extensa
+
+Para una inmersión detallada en cada componente del framework, consulta los manuales en `docs/`:
+
+- [Portal de Documentación Principal (docs/es/index.md)](docs/es/index.md)
+- [Arquitectura Técnica y Multi-Root Workspace (docs/es/architecture/overview.md)](docs/es/architecture/overview.md)
+- [Guía de Onboarding Paso a Paso (docs/es/guides/onboarding-setup.md)](docs/es/guides/onboarding-setup.md)
+- [Ciclo de Vida de 8 Fases y Human Gates (docs/es/guides/lifecycle-and-gates.md)](docs/es/guides/lifecycle-and-gates.md)
+- [Manual de los 11 Agentes Declarativos (docs/es/agents/catalog.md)](docs/es/agents/catalog.md)
+- [Manual de las 13 Agent Skills Procedimentales (docs/es/skills/catalog.md)](docs/es/skills/catalog.md)
+- [Seguridad Empresarial y Sincronización OneDrive (docs/es/governance/security-and-sync.md)](docs/es/governance/security-and-sync.md)
