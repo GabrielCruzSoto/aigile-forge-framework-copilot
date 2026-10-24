@@ -114,12 +114,24 @@ Para asegurar que los agentes no improvisen sus entregables, cada uno cuenta con
 # 1. Verificar herramientas de desarrollo y extensiones de VS Code
 ./scripts/install-dependencies.sh
 
-# 2. Configurar exclusiones locales (.git/info/exclude) y Multi-Root
+# 2. Configurar exclusiones locales (.git/info/exclude), Skills y Multi-Root
 ./scripts/setup-framework.sh
+
+# Opcional: Habilitar sincronización automática de documentación a OneDrive
+./scripts/setup-framework.sh --enable-onedrive "~/OneDrive - Empresa/Documentacion-Celula"
 
 # 3. Abrir el workspace multi-root en VS Code
 code cell.code-workspace
 
 # 4. Validar seguridad pre-commit
 ./scripts/aff-secret-scan.sh
+
+# 5. Estado y sincronización manual de OneDrive (si está activo)
+./scripts/sync-onedrive.sh --status
+./scripts/sync-onedrive.sh
 ```
+
+### Sincronización Automática con OneDrive (Opcional)
+- **Qué sube:** `knowledge/`, `work/`, `sprints/`, `templates/`, `cell.config.yaml` y docs raíz.
+- **Qué excluye:** `.git/`, repositorios de código, `node_modules/`, binarios y temporales.
+- **Mecanismo:** Un hook Git `post-commit` dispara [`sync-onedrive.sh`](file:///home/gabrielcruzsoto/Proyectos/Tools_Agents/projects/aigile-forge-framework-copilot/scripts/sync-onedrive.sh) en segundo plano tras cada commit en el hub.
