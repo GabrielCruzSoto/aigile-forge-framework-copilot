@@ -1,13 +1,13 @@
 #!/usr/bin/env bash
 # ==============================================================================
 # Script: install-dependencies.sh
-# Purpose: Check developer tools, VS Code CLI, and linters for AFF-M
+# Purpose: Check developer tools, VS Code CLI, and linters for AFF-Copilot
 # Operating System: macOS / Linux / Git Bash on Windows
 # ==============================================================================
 
 set -euo pipefail
 
-echo "==> [AFF-M] Checking developer workstation tools..."
+echo "==> [AFF-Copilot] Checking developer workstation tools..."
 
 check_cmd() {
     local cmd="$1"
@@ -22,10 +22,10 @@ check_cmd() {
 check_cmd "git" "Required for version control"
 check_cmd "code" "Install VS Code and run 'Install code command in PATH'"
 check_cmd "mvn" "Required for Java/Kotlin backend services"
-check_cmd "node" "Required for Angular frontend portal"
+check_cmd "node" "Required for Angular/Web frontend portal"
 check_cmd "npm" "Installed with Node.js"
 
-echo "==> [AFF-M] Checking VS Code Copilot extension..."
+echo "==> [AFF-Copilot] Checking VS Code Copilot extension..."
 if command -v code >/dev/null 2>&1; then
     if code --list-extensions 2>/dev/null | grep -i "github.copilot" >/dev/null; then
         echo "  [OK] GitHub Copilot extension installed in VS Code."
@@ -36,4 +36,4 @@ if command -v code >/dev/null 2>&1; then
 fi
 
 chmod +x scripts/*.sh 2>/dev/null || true
-echo "==> [AFF-M] Tool check completed."
+echo "==> [AFF-Copilot] Tool check completed."

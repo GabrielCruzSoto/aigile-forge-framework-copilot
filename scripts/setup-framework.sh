@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # ==============================================================================
 # Script: setup-framework.sh
-# Purpose: Configure local Multi-Root Workspace and .git/info/exclude
+# Purpose: Configure local Multi-Root Workspace, .git/info/exclude and Agent Skills
 #          Ensures zero footprint on remote repositories during Phase 0/1.
 # ==============================================================================
 
@@ -24,7 +24,18 @@ if [ -d ".git" ]; then
     grep -q "sprints/" .git/info/exclude 2>/dev/null || echo "sprints/" >> .git/info/exclude
 fi
 
-# 3. Verify cell.code-workspace
+# 3. Synchronize and install Agent Skills to .github/skills/
+echo "  [OK] Installing and synchronizing Agent Skills to .github/skills/..."
+mkdir -p .github/skills
+if [ -d "skills" ]; then
+    cp -r skills/* .github/skills/
+    SKILL_COUNT=$(find .github/skills -type f -name "SKILL.md" 2>/dev/null | wc -l)
+    echo "  [OK] $SKILL_COUNT Agent Skills installed and verified in .github/skills/."
+else
+    echo "  [WARN] skills/ directory not found in $BASE_DIR."
+fi
+
+# 4. Verify cell.code-workspace
 if [ -f "cell.code-workspace" ]; then
     echo "  [OK] Multi-Root Workspace file verified: cell.code-workspace"
 else
@@ -32,5 +43,5 @@ else
 fi
 
 echo "==> [AFF-Copilot] Setup completed successfully."
-echo "    Open cell.code-workspace in VS Code to activate Copilot agents."
+echo "    Open cell.code-workspace in VS Code to activate Copilot agents and skills."
 echo "    Run prompt /init-cell with agent @aff-onboarding to configure your cell context."
