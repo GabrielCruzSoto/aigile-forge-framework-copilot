@@ -30,15 +30,20 @@ Ejecuta el script de diagnóstico para verificar que tu máquina cuenta con las 
 ```
 El script detectará automáticamente tu sistema operativo (Linux, macOS o Windows mediante Git Bash/MSYS2) y comprobará la presencia de `git`, `bash`, `code`, `sed`, `grep` y extensiones de VS Code.
 
-### Paso 3: Inicializar el Framework y las Skills
-Ejecuta el script de configuración base:
+### Paso 3: Inicializar o Crear el Workspace del Agente
+Ejecuta el script de configuración indicando la **ruta obligatoria** donde se creará o configurará el workspace:
 ```bash
-./scripts/setup-framework.sh
+# Para configurar el workspace en el directorio actual:
+./scripts/setup-framework.sh .
+
+# O para scaffoldear un nuevo workspace en otra ruta (ej. nueva célula):
+./scripts/setup-framework.sh /ruta/al/nuevo-workspace
 ```
-Este script realiza tres acciones críticas:
-1. Crea la estructura de carpetas de trabajo (`knowledge/`, `work/`, `sprints/`, `archive/`).
-2. Sincroniza y valida todas las **Agent Skills** desde `skills/` hacia `.github/skills/`.
-3. Configura el aislamiento en `.git/info/exclude`.
+Este script realiza las siguientes acciones críticas:
+1. Crea la estructura completa de carpetas de trabajo (`knowledge/`, `work/`, `sprints/`, `archive/`, `templates/`).
+2. Scaffoldea y copia `.github/` (agentes, prompts, instrucciones) y `cell.code-workspace` si la ruta destino es externa.
+3. Sincroniza y valida todas las **13 Agent Skills** hacia `.github/skills/`.
+4. Configura el aislamiento en `.git/info/exclude` (cero huella remota).
 
 *(Opcional: Si tu organización requiere respaldar la documentación de la célula en OneDrive, consulta la [Guía de Seguridad y Sincronización](../governance/security-and-sync.md)).*
 

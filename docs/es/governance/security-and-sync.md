@@ -57,12 +57,12 @@ AFF-Copilot resuelve esta necesidad mediante un mecanismo de sincronización uni
 Al inicializar el framework, especifica la ruta de tu carpeta corporativa de OneDrive:
 
 ```bash
-./scripts/setup-framework.sh --enable-onedrive "~/OneDrive - MiEmpresa/Documentacion-Celula"
+./scripts/setup-framework.sh <ruta-workspace> --enable-onedrive "~/OneDrive - MiEmpresa/Documentacion-Celula"
 ```
 
 El script configurará:
-1. La variable `ONEDRIVE_SYNC_TARGET` en `scripts/.sync-config`.
-2. Un hook de Git en `.git/hooks/post-commit` dentro del hub del framework.
+1. El archivo de configuración `.onedrive-sync.conf` en el workspace destino.
+2. Un hook de Git en `.git/hooks/post-commit` dentro del workspace.
 
 ### Comportamiento del Hook Automático:
 - **Disparo:** Cada vez que realizas un commit en el hub de AFF-Copilot, el hook ejecuta [`sync-onedrive.sh`](file:///home/gabrielcruzsoto/Proyectos/Tools_Agents/projects/aigile-forge-framework-copilot/scripts/sync-onedrive.sh) **en segundo plano** (`nohup ... &`).

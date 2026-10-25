@@ -116,11 +116,12 @@ Para asegurar que los agentes no improvisen sus entregables, cada uno cuenta con
 # 1. Verificar herramientas de desarrollo y extensiones de VS Code
 ./scripts/install-dependencies.sh
 
-# 2. Configurar exclusiones locales (.git/info/exclude), Skills y Multi-Root
-./scripts/setup-framework.sh
+# 2. Inicializar o crear el workspace de la célula (parámetro obligatorio: ruta destino)
+# En el directorio actual:
+./scripts/setup-framework.sh .
 
-# Opcional: Habilitar sincronización automática de documentación a OneDrive
-./scripts/setup-framework.sh --enable-onedrive "~/OneDrive - Empresa/Documentacion-Celula"
+# O crear un nuevo workspace en otra ruta (con sync opcional a OneDrive):
+./scripts/setup-framework.sh /ruta/al/nuevo-workspace --enable-onedrive "~/OneDrive - Empresa/Documentacion-Celula"
 
 # 3. Abrir el workspace multi-root en VS Code
 code cell.code-workspace

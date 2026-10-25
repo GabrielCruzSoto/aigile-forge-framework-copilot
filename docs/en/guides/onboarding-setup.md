@@ -30,15 +30,20 @@ Execute the diagnostic script to ensure your environment has the required CLI to
 ```
 The script automatically detects your operating system (Linux, macOS, or Windows via Git Bash/MSYS2) and verifies that `git`, `bash`, `code`, `sed`, `grep`, and the necessary VS Code extensions are available.
 
-### Step 3: Initialize the Framework and Skills
-Run the setup script:
+### Step 3: Initialize or Scaffold the Agent Workspace
+Execute the setup script by supplying the **mandatory path parameter** where the agent workspace should be initialized or created:
 ```bash
-./scripts/setup-framework.sh
+# To initialize the workspace in the current directory:
+./scripts/setup-framework.sh .
+
+# Or to scaffold a fresh cell workspace at an external path:
+./scripts/setup-framework.sh /path/to/new-workspace
 ```
-This script performs three automated actions:
-1. Creates local working directories (`knowledge/`, `work/`, `sprints/`, `archive/`).
-2. Syncs and validates all **Agent Skills** from `skills/` to `.github/skills/`.
-3. Sets up local Git exclusion rules in `.git/info/exclude`.
+This script performs the following essential actions:
+1. Creates the complete working directory layout (`knowledge/`, `work/`, `sprints/`, `archive/`, `templates/`).
+2. Scaffolds `.github/` (agents, prompts, instructions) and `cell.code-workspace` if target path is external.
+3. Syncs and verifies all **13 Agent Skills** into `.github/skills/`.
+4. Sets up local Git isolation rules in `.git/info/exclude` (zero remote footprint).
 
 *(Optional: If your organization requires cell documentation to be backed up to Microsoft OneDrive, see the [Security & OneDrive Sync Guide](../governance/security-and-sync.md)).*
 

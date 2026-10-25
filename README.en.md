@@ -116,11 +116,12 @@ To prevent hallucination, each agent follows a **Procedural Agent Skill** defini
 # 1. Verify development tools and VS Code extensions
 ./scripts/install-dependencies.sh
 
-# 2. Configure local Git exclusions (.git/info/exclude), Skills, and Multi-Root
-./scripts/setup-framework.sh
+# 2. Initialize or scaffold cell agent workspace (mandatory parameter: target path)
+# In current directory:
+./scripts/setup-framework.sh .
 
-# Optional: Enable automated documentation backup to OneDrive
-./scripts/setup-framework.sh --enable-onedrive "~/OneDrive - MyCompany/Cell-Docs"
+# Or scaffold into a new workspace path (with optional OneDrive sync):
+./scripts/setup-framework.sh /path/to/new-workspace --enable-onedrive "~/OneDrive - MyCompany/Cell-Docs"
 
 # 3. Open the Multi-Root Workspace in VS Code
 code cell.code-workspace

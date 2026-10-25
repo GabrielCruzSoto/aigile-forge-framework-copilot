@@ -57,12 +57,12 @@ AFF-Copilot provides a decoupled, unidirectional background synchronization mech
 When initializing the framework, supply your corporate OneDrive directory path:
 
 ```bash
-./scripts/setup-framework.sh --enable-onedrive "~/OneDrive - MyCompany/Cell-Docs"
+./scripts/setup-framework.sh <target-workspace-path> --enable-onedrive "~/OneDrive - MyCompany/Cell-Docs"
 ```
 
 The script configures:
-1. The target path in `scripts/.sync-config`.
-2. A non-blocking Git hook at `.git/hooks/post-commit` inside the AFF hub repository.
+1. The `.onedrive-sync.conf` configuration file in the target workspace.
+2. A non-blocking Git hook at `.git/hooks/post-commit` inside the target workspace.
 
 ### Background Hook Mechanics:
 - **Trigger:** Every commit inside the AFF-Copilot hub triggers [`sync-onedrive.sh`](file:///home/gabrielcruzsoto/Proyectos/Tools_Agents/projects/aigile-forge-framework-copilot/scripts/sync-onedrive.sh) **asynchronously in the background** (`nohup ... &`).
