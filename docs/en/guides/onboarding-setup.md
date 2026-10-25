@@ -23,27 +23,23 @@ git clone <AFF_COPILOT_REPO_URL> aigile-forge-framework-copilot
 cd aigile-forge-framework-copilot
 ```
 
-### Step 2: Run Environment Diagnostics
-Execute the diagnostic script to ensure your environment has the required CLI tools:
+### Step 2: Initialize and Scaffold with `aigile-copilot`
+Run the unified interactive CLI assistant to verify the environment and scaffold the cell workspace:
 ```bash
-./scripts/install-dependencies.sh
+./aigile-copilot
 ```
-The script automatically detects your operating system (Linux, macOS, or Windows via Git Bash/MSYS2) and verifies that `git`, `bash`, `code`, `sed`, `grep`, and the necessary VS Code extensions are available.
-
-### Step 3: Initialize or Scaffold the Agent Workspace
-Execute the setup script by supplying the **mandatory path parameter** where the agent workspace should be initialized or created:
+Or run directly by providing command-line options:
 ```bash
-# To initialize the workspace in the current directory:
-./scripts/setup-framework.sh .
-
-# Or to scaffold a fresh cell workspace at an external path:
-./scripts/setup-framework.sh /path/to/new-workspace
+./aigile-copilot --lang en --name my-cell --workspace /path/to/new-workspace
 ```
 This script performs the following essential actions:
-1. Creates the complete working directory layout (`knowledge/`, `work/`, `sprints/`, `archive/`, `templates/`).
-2. Scaffolds `.github/` (agents, prompts, instructions) and `cell.code-workspace` if target path is external.
-3. Syncs and verifies all **13 Agent Skills** into `.github/skills/`.
-4. Sets up local Git isolation rules in `.git/info/exclude` (zero remote footprint).
+1. Prompts for working and artifact generation language (English or Spanish).
+2. Detects operating system (Linux, macOS, Windows).
+3. Checks required developer tools (`git`, `code`, `mvn`, `node`, `npm`, `rsync`) with actionable installation instructions for missing tools.
+4. Detects OneDrive Desktop and configures cloud sync for documentation (zero code).
+5. Verifies GitHub Copilot VS Code extension.
+6. Scaffolds complete cell workspace with channel parity layout (`repositories/API-REST`, `backend`, `frontend`, `mobile`, `knowledge/`, `work/`, `sprints/`, `templates/`, and `.github/`).
+7. Generates `<cell_name>-cell.code-workspace` and `<cell_name>-cell.config.yaml`.
 
 *(Optional: If your organization requires cell documentation to be backed up to Microsoft OneDrive, see the [Security & OneDrive Sync Guide](../governance/security-and-sync.md)).*
 

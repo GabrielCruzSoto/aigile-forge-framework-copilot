@@ -54,10 +54,10 @@ En muchas empresas, las células de desarrollo desean respaldar su base de conoc
 AFF-Copilot resuelve esta necesidad mediante un mecanismo de sincronización unidireccional y desacoplado.
 
 ### Cómo Habilitar la Sincronización:
-Al inicializar el framework, especifica la ruta de tu carpeta corporativa de OneDrive:
+El asistente [`aigile-copilot`](file:///home/gabrielcruzsoto/Proyectos/Tools_Agents/projects/aigile-forge-framework-copilot/aigile-copilot) detecta automáticamente OneDrive Desktop al inicializar el workspace y activa la sincronización de gobernanza y documentos sin tocar los repositorios de código:
 
 ```bash
-./scripts/setup-framework.sh <ruta-workspace> --enable-onedrive "~/OneDrive - MiEmpresa/Documentacion-Celula"
+./aigile-copilot
 ```
 
 El script configurará:

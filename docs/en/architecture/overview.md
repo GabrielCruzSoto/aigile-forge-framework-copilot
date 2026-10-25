@@ -81,7 +81,7 @@ Rather than forcing an artificial monorepo or cloning repositories as nested git
 
 In corporate environments governed by strict compliance policies, committing AI tooling or local orchestrator files directly into production branches is prohibited during early pilot phases.
 
-To enforce compliance, the [`setup-framework.sh`](file:///home/gabrielcruzsoto/Proyectos/Tools_Agents/projects/aigile-forge-framework-copilot/scripts/setup-framework.sh) script automatically appends framework patterns to `.git/info/exclude` in each linked repository. Unlike `.gitignore`, `.git/info/exclude` **is never committed or pushed upstream**, keeping all agent orchestration artifacts strictly private to the developer's workstation.
+To enforce compliance, the [`aigile-copilot`](file:///home/gabrielcruzsoto/Proyectos/Tools_Agents/projects/aigile-forge-framework-copilot/aigile-copilot) assistant automatically appends framework patterns to `.git/info/exclude` in each linked repository. Unlike `.gitignore`, `.git/info/exclude` **is never committed or pushed upstream**, keeping all agent orchestration artifacts strictly private to the developer's workstation.
 
 ---
 
@@ -135,9 +135,8 @@ aigile-forge-framework-copilot/
 │   ├── prompts/                # Chat slash commands
 │   ├── instructions/           # Contextual instructions
 │   └── skills/                 # Mirrored skills accessible to Copilot
+├── aigile-copilot              # Unified diagnostics & scaffolding CLI assistant
 └── scripts/                    # Cross-platform automation and audit scripts
-    ├── install-dependencies.sh # Environment diagnostics
-    ├── setup-framework.sh      # Workspace and skill initialization
     ├── sync-onedrive.sh        # Optional OneDrive documentation backup
     └── aff-secret-scan.sh      # Pre-commit secret and PII scanner
 ```

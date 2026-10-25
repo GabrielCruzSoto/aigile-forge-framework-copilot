@@ -113,23 +113,19 @@ To prevent hallucination, each agent follows a **Procedural Agent Skill** defini
 ## 6. Local Setup and Quickstart
 
 ```bash
-# 1. Verify development tools and VS Code extensions
-./scripts/install-dependencies.sh
+# 1. Initialize cell and check environment with the unified assistant
+./aigile-copilot
 
-# 2. Initialize or scaffold cell agent workspace (mandatory parameter: target path)
-# In current directory:
-./scripts/setup-framework.sh .
+# Or run specifying language, name, and workspace directly:
+./aigile-copilot --lang en --name my-cell --workspace /path/to/new-workspace
 
-# Or scaffold into a new workspace path (with optional OneDrive sync):
-./scripts/setup-framework.sh /path/to/new-workspace --enable-onedrive "~/OneDrive - MyCompany/Cell-Docs"
+# 2. Open multi-root workspace in VS Code
+code "<workspace-path>/<cell_name>-cell.code-workspace"
 
-# 3. Open the Multi-Root Workspace in VS Code
-code cell.code-workspace
-
-# 4. Run local pre-commit security and PII scan
+# 3. Run local pre-commit security and PII scan
 ./scripts/aff-secret-scan.sh
 
-# 5. Check OneDrive sync status or trigger manual backup
+# 4. Check OneDrive sync status or trigger manual backup
 ./scripts/sync-onedrive.sh --status
 ./scripts/sync-onedrive.sh
 ```

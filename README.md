@@ -113,23 +113,19 @@ Para asegurar que los agentes no improvisen sus entregables, cada uno cuenta con
 ## 6. Puesta en Marcha Local
 
 ```bash
-# 1. Verificar herramientas de desarrollo y extensiones de VS Code
-./scripts/install-dependencies.sh
+# 1. Inicializar célula y verificar entorno con el asistente unificado
+./aigile-copilot
 
-# 2. Inicializar o crear el workspace de la célula (parámetro obligatorio: ruta destino)
-# En el directorio actual:
-./scripts/setup-framework.sh .
+# O ejecutar indicando idioma, nombre y workspace directamente:
+./aigile-copilot --lang es --name mi-celula --workspace /ruta/al/nuevo-workspace
 
-# O crear un nuevo workspace en otra ruta (con sync opcional a OneDrive):
-./scripts/setup-framework.sh /ruta/al/nuevo-workspace --enable-onedrive "~/OneDrive - Empresa/Documentacion-Celula"
+# 2. Abrir el workspace multi-root en VS Code
+code "<ruta-workspace>/<nombre_celula>-cell.code-workspace"
 
-# 3. Abrir el workspace multi-root en VS Code
-code cell.code-workspace
-
-# 4. Validar seguridad pre-commit
+# 3. Validar seguridad pre-commit
 ./scripts/aff-secret-scan.sh
 
-# 5. Estado y sincronización manual de OneDrive (si está activo)
+# 4. Estado y sincronización manual de OneDrive (si está activo)
 ./scripts/sync-onedrive.sh --status
 ./scripts/sync-onedrive.sh
 ```

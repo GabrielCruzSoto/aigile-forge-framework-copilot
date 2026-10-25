@@ -54,10 +54,10 @@ Many organizations require agile cells to maintain an automated backup of team k
 AFF-Copilot provides a decoupled, unidirectional background synchronization mechanism.
 
 ### How to Enable Synchronization:
-When initializing the framework, supply your corporate OneDrive directory path:
+The [`aigile-copilot`](file:///home/gabrielcruzsoto/Proyectos/Tools_Agents/projects/aigile-forge-framework-copilot/aigile-copilot) assistant automatically detects OneDrive Desktop when scaffolding the workspace and enables document backup with zero code footprint:
 
 ```bash
-./scripts/setup-framework.sh <target-workspace-path> --enable-onedrive "~/OneDrive - MyCompany/Cell-Docs"
+./aigile-copilot
 ```
 
 The script configures:

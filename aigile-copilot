@@ -1,0 +1,700 @@
+#!/usr/bin/env bash
+# ==============================================================================
+# Script: aigile-copilot
+# Description: Unified CLI tool for Aigile Forge Framework - Copilot Edition.
+#              Performs environment diagnostics, tool verification, OneDrive
+#              detection, and scaffolds the multi-root enterprise cell workspace.
+# ==============================================================================
+
+set -euo pipefail
+
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+FRAMEWORK_DIR="$SCRIPT_DIR"
+
+# ------------------------------------------------------------------------------
+# 2.2 Detect Operating System
+# ------------------------------------------------------------------------------
+detect_os() {
+    local u_name
+    u_name="$(uname -s 2>/dev/null || echo "Unknown")"
+    case "$u_name" in
+        Darwin*)
+            echo "macos"
+            ;;
+        Linux*)
+            echo "linux"
+            ;;
+        CYGWIN*|MINGW*|MSYS*)
+            echo "windows"
+            ;;
+        *)
+            echo "unknown"
+            ;;
+    esac
+}
+
+DETECTED_OS="$(detect_os)"
+
+case "$DETECTED_OS" in
+    macos)
+        OS_DISPLAY="macOS (Darwin)"
+        ;;
+    linux)
+        OS_DISPLAY="Linux"
+        ;;
+    windows)
+        OS_DISPLAY="Windows (Git Bash / MSYS)"
+        ;;
+    *)
+        OS_DISPLAY="Unknown OS ($DETECTED_OS)"
+        ;;
+esac
+
+# ------------------------------------------------------------------------------
+# Arguments & Defaults
+# ------------------------------------------------------------------------------
+LANG_CHOICE=""
+CELL_NAME=""
+TARGET_WORKSPACE_INPUT=""
+NON_INTERACTIVE=false
+
+print_usage() {
+    cat << EOF
+Aigile Forge Framework - Copilot Declarative Edition CLI
+
+Uso / Usage:
+  $0 [opciones / options]
+
+Opciones / Options:
+  -l, --lang <es|en>       Idioma de instalación y artefactos / Language choice (es | en)
+  -n, --name <nombre>      Nombre de la célula / Cell name
+  -w, --workspace <ruta>   Ruta donde crear el workspace / Path to create workspace
+  -y, --non-interactive    Ejecutar con valores por defecto / Non-interactive mode
+  -h, --help               Mostrar esta ayuda / Display this help message
+
+Ejemplos / Examples:
+  $0
+  $0 --lang es --name pagos-web --workspace ~/workspaces/pagos-web
+  $0 --lang en --name core-billing -y
+EOF
+}
+
+while [[ $# -gt 0 ]]; do
+    case "$1" in
+        -l|--lang)
+            LANG_CHOICE="$2"
+            shift 2
+            ;;
+        -n|--name)
+            CELL_NAME="$2"
+            shift 2
+            ;;
+        -w|--workspace)
+            TARGET_WORKSPACE_INPUT="$2"
+            shift 2
+            ;;
+        -y|--non-interactive)
+            NON_INTERACTIVE=true
+            shift
+            ;;
+        -h|--help)
+            print_usage
+            exit 0
+            ;;
+        *)
+            echo "Opción desconocida / Unknown option: $1" >&2
+            print_usage
+            exit 1
+            ;;
+    esac
+done
+
+# ------------------------------------------------------------------------------
+# 2.1 Seleccionar Idioma (Inglés y Español)
+# ------------------------------------------------------------------------------
+if [ -z "$LANG_CHOICE" ]; then
+    if [ "$NON_INTERACTIVE" = true ]; then
+        LANG_CHOICE="es"
+    else
+        echo ""
+        echo "================================================================================"
+        echo "       Aigile Forge Framework — Copilot Declarative Edition (AFF-Copilot)        "
+        echo "================================================================================"
+        echo ""
+        echo "Seleccione el idioma / Select your language:"
+        echo "  1) Español (Spanish) [Predeterminado / Default]"
+        echo "  2) English (Inglés)"
+        echo ""
+        read -r -p "Opción / Option [1]: " RAW_LANG_INPUT
+        case "$RAW_LANG_INPUT" in
+            2|[eE][nN]*)
+                LANG_CHOICE="en"
+                ;;
+            *)
+                LANG_CHOICE="es"
+                ;;
+        esac
+    fi
+fi
+
+if [ "$LANG_CHOICE" != "en" ] && [ "$LANG_CHOICE" != "es" ]; then
+    LANG_CHOICE="es"
+fi
+
+if [ "$LANG_CHOICE" = "es" ]; then
+    TXT_HEADER="==> [AFF-Copilot] Inicialización de Célula y Verificación de Entorno"
+    TXT_OS="==> [AFF-Copilot] Sistema Operativo detectado: $OS_DISPLAY"
+    TXT_CHECK_TOOLS="==> [AFF-Copilot] Verificando programas necesarios..."
+    TXT_TOOL_FOUND="[OK]"
+    TXT_TOOL_MISSING="[ALERTA]"
+    TXT_CHECK_ONEDRIVE="==> [AFF-Copilot] Verificando OneDrive Desktop..."
+    TXT_CHECK_COPILOT="==> [AFF-Copilot] Verificando extensión GitHub Copilot en VS Code..."
+    TXT_PROMPT_CELL_NAME="Ingrese el nombre de la célula (ej: pagos-web, facturacion): "
+    TXT_PROMPT_WORKSPACE_PATH="Ingrese la ruta donde se creará el workspace [Enter para usar %s]: "
+    TXT_CREATING_WORKSPACE="==> [AFF-Copilot] Creando workspace multi-root para la célula..."
+    TXT_SUMMARY_HEADER="================================================================================"
+    TXT_SUMMARY_TITLE="                 RESUMEN DE CONFIGURACIÓN DEL WORKSPACE                         "
+    TXT_WORKSPACE_READY="Workspace de la célula creado con éxito en:"
+    TXT_NEXT_STEPS_TITLE="Pasos a seguir para continuar con la configuración:"
+    TXT_STEP_1="1. Abrir el workspace multi-root en VS Code:"
+    TXT_STEP_2="2. En GitHub Copilot Chat, ejecutar el agente de onboarding:"
+    TXT_ARTIFACTS_RULES_TITLE="Reglas de Generación de Artefactos para el Agente (Español):"
+    TXT_ARTIFACTS_RULE_1="- Documentación funcional, historias, elicitation y specs (knowledge/, spec.md, task-cards): ESPAÑOL NEUTRO/PROFESIONAL."
+    TXT_ARTIFACTS_RULE_2="- Artefactos técnicos de ingeniería (código fuente, OpenAPI, schemas JSON, commits y PRs): INGLÉS."
+    TXT_ARTIFACTS_RULE_3="- Cero PII en logs y código; paridad 1:1 entre Web y Mobile."
+else
+    TXT_HEADER="==> [AFF-Copilot] Cell Initialization & Environment Diagnostics"
+    TXT_OS="==> [AFF-Copilot] Operating System detected: $OS_DISPLAY"
+    TXT_CHECK_TOOLS="==> [AFF-Copilot] Checking required developer tools..."
+    TXT_TOOL_FOUND="[OK]"
+    TXT_TOOL_MISSING="[WARN]"
+    TXT_CHECK_ONEDRIVE="==> [AFF-Copilot] Checking OneDrive Desktop..."
+    TXT_CHECK_COPILOT="==> [AFF-Copilot] Checking GitHub Copilot extension in VS Code..."
+    TXT_PROMPT_CELL_NAME="Enter cell name (e.g., web-payments, billing-core): "
+    TXT_PROMPT_WORKSPACE_PATH="Enter path where cell workspace will be created [Press Enter for %s]: "
+    TXT_CREATING_WORKSPACE="==> [AFF-Copilot] Scaffolding multi-root cell workspace..."
+    TXT_SUMMARY_HEADER="================================================================================"
+    TXT_SUMMARY_TITLE="                   WORKSPACE CONFIGURATION SUMMARY                              "
+    TXT_WORKSPACE_READY="Cell workspace successfully created at:"
+    TXT_NEXT_STEPS_TITLE="Next steps to complete framework setup:"
+    TXT_STEP_1="1. Open multi-root workspace in VS Code:"
+    TXT_STEP_2="2. In GitHub Copilot Chat, run onboarding agent:"
+    TXT_ARTIFACTS_RULES_TITLE="Agent Artifact Generation Rules (English):"
+    TXT_ARTIFACTS_RULE_1="- Functional documentation, user stories, elicitation and specs (knowledge/, spec.md, task-cards): ENGLISH."
+    TXT_ARTIFACTS_RULE_2="- Technical engineering artifacts (source code, OpenAPI, JSON schemas, commits, and PRs): ENGLISH."
+    TXT_ARTIFACTS_RULE_3="- Strict Zero PII in logs and code; 1:1 Web to Mobile parity enforced."
+fi
+
+echo ""
+echo "$TXT_HEADER"
+echo "$TXT_OS"
+
+# ------------------------------------------------------------------------------
+# 2.3 Detectar Programas Necesarios (git, code, mvn, node, npm, rsync)
+# ------------------------------------------------------------------------------
+echo ""
+echo "$TXT_CHECK_TOOLS"
+
+MISSING_TOOLS=()
+
+check_required_tool() {
+    local cmd="$1"
+    local install_help_es="$2"
+    local install_help_en="$3"
+
+    if command -v "$cmd" >/dev/null 2>&1; then
+        local tool_path
+        tool_path="$(command -v "$cmd")"
+        echo "  $TXT_TOOL_FOUND $cmd ($tool_path)"
+    else
+        echo "  $TXT_TOOL_MISSING $cmd"
+        if [ "$LANG_CHOICE" = "es" ]; then
+            echo "         Instrucción de instalación: $install_help_es"
+        else
+            echo "         Installation instruction: $install_help_en"
+        fi
+        MISSING_TOOLS+=("$cmd")
+    fi
+}
+
+case "$DETECTED_OS" in
+    linux)
+        check_required_tool "git" "sudo apt install -y git (o sudo dnf install git)" "sudo apt install -y git (or sudo dnf install git)"
+        check_required_tool "code" "Descargar desde https://code.visualstudio.com/Download o 'sudo snap install code --classic'" "Download from https://code.visualstudio.com/Download or 'sudo snap install code --classic'"
+        check_required_tool "mvn" "sudo apt install -y maven (o sudo dnf install maven)" "sudo apt install -y maven (or sudo dnf install maven)"
+        check_required_tool "node" "sudo apt install -y nodejs npm o vía NVM (https://github.com/nvm-sh/nvm)" "sudo apt install -y nodejs npm or via NVM (https://github.com/nvm-sh/nvm)"
+        check_required_tool "npm" "Se instala junto con Node.js (sudo apt install -y npm)" "Installed together with Node.js"
+        check_required_tool "rsync" "sudo apt install -y rsync (o sudo dnf install rsync)" "sudo apt install -y rsync (or sudo dnf install rsync)"
+        ;;
+    macos)
+        check_required_tool "git" "brew install git" "brew install git"
+        check_required_tool "code" "brew install --cask visual-studio-code (luego en VS Code: Cmd+Shift+P > Shell Command: Install 'code' command in PATH)" "brew install --cask visual-studio-code (then in VS Code: Cmd+Shift+P > Shell Command: Install 'code' command in PATH)"
+        check_required_tool "mvn" "brew install maven" "brew install maven"
+        check_required_tool "node" "brew install node" "brew install node"
+        check_required_tool "npm" "Se instala automáticamente junto con Node.js (brew install node)" "Installed together with Node.js (brew install node)"
+        check_required_tool "rsync" "brew install rsync" "brew install rsync"
+        ;;
+    windows)
+        check_required_tool "git" "winget install --id Git.Git -e --source winget o https://git-scm.com/" "winget install --id Git.Git -e --source winget or https://git-scm.com/"
+        check_required_tool "code" "winget install --id Microsoft.VisualStudioCode -e o https://code.visualstudio.com/" "winget install --id Microsoft.VisualStudioCode -e or https://code.visualstudio.com/"
+        check_required_tool "mvn" "winget install --id Apache.Maven -e o https://maven.apache.org/" "winget install --id Apache.Maven -e or https://maven.apache.org/"
+        check_required_tool "node" "winget install --id OpenJS.NodeJS -e o https://nodejs.org/" "winget install --id OpenJS.NodeJS -e or https://nodejs.org/"
+        check_required_tool "npm" "Se incluye en la instalación de Node.js" "Included with Node.js installer"
+        check_required_tool "rsync" "Instalar mediante Git Bash / MSYS2 o el script usará copia nativa" "Install via Git Bash / MSYS2 or script will fallback to cp"
+        ;;
+    *)
+        check_required_tool "git" "Instalar desde https://git-scm.com/" "Install from https://git-scm.com/"
+        check_required_tool "code" "Instalar desde https://code.visualstudio.com/" "Install from https://code.visualstudio.com/"
+        check_required_tool "mvn" "Instalar desde https://maven.apache.org/" "Install from https://maven.apache.org/"
+        check_required_tool "node" "Instalar desde https://nodejs.org/" "Install from https://nodejs.org/"
+        check_required_tool "npm" "Instalar junto con Node.js" "Install with Node.js"
+        check_required_tool "rsync" "Instalar mediante el gestor de paquetes de su sistema" "Install via system package manager"
+        ;;
+esac
+
+# ------------------------------------------------------------------------------
+# 2.4 Detectar la existencia de OneDrive Desktop
+# ------------------------------------------------------------------------------
+echo ""
+echo "$TXT_CHECK_ONEDRIVE"
+
+ONEDRIVE_FOUND=false
+DETECTED_ONEDRIVE_PATH=""
+
+find_onedrive_path() {
+    local candidate=""
+    case "$DETECTED_OS" in
+        macos)
+            for p in "$HOME/Library/CloudStorage"/OneDrive* "$HOME"/OneDrive*; do
+                if [ -d "$p" ]; then
+                    candidate="$p/Cell-Documentation"
+                    break
+                fi
+            done
+            if [ -z "$candidate" ] && [ -d "/Applications/OneDrive.app" ]; then
+                candidate="$HOME/OneDrive/Cell-Documentation"
+            fi
+            ;;
+        windows)
+            local win_profile="${USERPROFILE:-}"
+            if [ -n "$win_profile" ]; then
+                if command -v cygpath >/dev/null 2>&1; then
+                    win_profile="$(cygpath -u "$win_profile")"
+                else
+                    win_profile="$(echo "$win_profile" | sed -e 's|\\|/|g' -e 's|^\([A-Za-z]\):|/\L\1|')"
+                fi
+                for p in "$win_profile"/OneDrive* "$HOME"/OneDrive*; do
+                    if [ -d "$p" ]; then
+                        candidate="$p/Cell-Documentation"
+                        break
+                    fi
+                done
+            fi
+            ;;
+        linux)
+            for p in "$HOME"/OneDrive* "$HOME"/onedrive*; do
+                if [ -d "$p" ]; then
+                    candidate="$p/Cell-Documentation"
+                    break
+                fi
+            done
+            if [ -z "$candidate" ] && command -v onedrive >/dev/null 2>&1; then
+                candidate="$HOME/OneDrive/Cell-Documentation"
+            fi
+            ;;
+    esac
+    echo "$candidate"
+}
+
+POSSIBLE_ONEDRIVE="$(find_onedrive_path)"
+
+if [ -n "$POSSIBLE_ONEDRIVE" ] && { [ -d "$(dirname "$POSSIBLE_ONEDRIVE")" ] || [ -d "$POSSIBLE_ONEDRIVE" ]; }; then
+    ONEDRIVE_FOUND=true
+    DETECTED_ONEDRIVE_PATH="$POSSIBLE_ONEDRIVE"
+fi
+
+if [ "$ONEDRIVE_FOUND" = true ]; then
+    if [ "$LANG_CHOICE" = "es" ]; then
+        echo "  [OK] OneDrive Desktop detectado en el sistema."
+        echo "       Ruta base de sincronización: $DETECTED_ONEDRIVE_PATH"
+        echo "       Los documentos generados por aigile-copilot (knowledge/, work/, sprints/, templates/) SE GUARDARÁN en la nube."
+    else
+        echo "  [OK] OneDrive Desktop detected on this system."
+        echo "       Sync base path: $DETECTED_ONEDRIVE_PATH"
+        echo "       Documents generated by aigile-copilot (knowledge/, work/, sprints/, templates/) WILL BE BACKED UP to the cloud."
+    fi
+else
+    if [ "$LANG_CHOICE" = "es" ]; then
+        echo "  [AVISO] No se detectó OneDrive Desktop instalado en este equipo."
+        echo "          Los documentos generados por aigile-copilot NO se guardarán en la nube (permanecerán locales en el disco)."
+    else
+        echo "  [NOTICE] OneDrive Desktop is not installed on this machine."
+        echo "           Documents generated by aigile-copilot will NOT be backed up to the cloud (they will remain strictly local)."
+    fi
+fi
+
+# ------------------------------------------------------------------------------
+# 2.5 Detectar la extensión de Copilot en VS Code
+# ------------------------------------------------------------------------------
+echo ""
+echo "$TXT_CHECK_COPILOT"
+
+if command -v code >/dev/null 2>&1; then
+    if code --list-extensions 2>/dev/null | grep -i "github.copilot" >/dev/null; then
+        if [ "$LANG_CHOICE" = "es" ]; then
+            echo "  [OK] Extensión GitHub Copilot detectada e instalada en VS Code."
+        else
+            echo "  [OK] GitHub Copilot extension detected and installed in VS Code."
+        fi
+    else
+        if [ "$LANG_CHOICE" = "es" ]; then
+            echo "  [ALERTA] Extensión GitHub Copilot no detectada en VS Code."
+            echo "           Instálela ejecutando en su terminal:"
+            echo "             code --install-extension GitHub.copilot"
+            echo "             code --install-extension GitHub.copilot-chat"
+        else
+            echo "  [WARN] GitHub Copilot extension not detected in VS Code."
+            echo "         Install it by running in your terminal:"
+            echo "           code --install-extension GitHub.copilot"
+            echo "           code --install-extension GitHub.copilot-chat"
+        fi
+    fi
+else
+    if [ "$LANG_CHOICE" = "es" ]; then
+        echo "  [ALERTA] Comando 'code' no disponible en el PATH. No se pudo verificar la extensión."
+    else
+        echo "  [WARN] 'code' command not available in PATH. Unable to verify extension."
+    fi
+fi
+
+# ------------------------------------------------------------------------------
+# 2.6 Solicitar Nombre de la Célula
+# ------------------------------------------------------------------------------
+echo ""
+if [ -z "$CELL_NAME" ]; then
+    if [ "$NON_INTERACTIVE" = true ]; then
+        CELL_NAME="aigile-cell"
+    else
+        read -r -p "$TXT_PROMPT_CELL_NAME" RAW_CELL_NAME
+        CELL_NAME="${RAW_CELL_NAME:-aigile-cell}"
+    fi
+fi
+
+# Normalizar slug de la célula
+CELL_NAME="$(echo "$CELL_NAME" | tr '[:upper:]' '[:lower:]' | tr ' ' '-' | sed 's/[^a-z0-9_-]//g')"
+if [ -z "$CELL_NAME" ]; then
+    CELL_NAME="aigile-cell"
+fi
+
+# ------------------------------------------------------------------------------
+# 2.7 Solicitar Ruta donde se va a crear el workspace de la célula
+# ------------------------------------------------------------------------------
+DEFAULT_TARGET_PATH="./$CELL_NAME"
+if [ -z "$TARGET_WORKSPACE_INPUT" ]; then
+    if [ "$NON_INTERACTIVE" = true ]; then
+        TARGET_WORKSPACE_INPUT="$DEFAULT_TARGET_PATH"
+    else
+        # shellcheck disable=SC2059
+        PROMPT_MSG="$(printf "$TXT_PROMPT_WORKSPACE_PATH" "$DEFAULT_TARGET_PATH")"
+        read -r -p "$PROMPT_MSG" RAW_TARGET_INPUT
+        TARGET_WORKSPACE_INPUT="${RAW_TARGET_INPUT:-$DEFAULT_TARGET_PATH}"
+    fi
+fi
+
+# Resolver ruta absoluta del workspace destino
+mkdir -p "$TARGET_WORKSPACE_INPUT"
+TARGET_DIR="$(cd "$TARGET_WORKSPACE_INPUT" && pwd)"
+
+# ------------------------------------------------------------------------------
+# 2.8 Crear el workspace de la célula con la estructura exacta
+# ------------------------------------------------------------------------------
+echo ""
+echo "$TXT_CREATING_WORKSPACE"
+echo "  [DIR] $TARGET_DIR"
+
+# 1. Crear directorios exactos requeridos
+mkdir -p "$TARGET_DIR"/knowledge
+mkdir -p "$TARGET_DIR"/repositories/API-REST
+mkdir -p "$TARGET_DIR"/repositories/backend
+mkdir -p "$TARGET_DIR"/repositories/frontend
+mkdir -p "$TARGET_DIR"/repositories/mobile
+mkdir -p "$TARGET_DIR"/work/HU-XXX
+mkdir -p "$TARGET_DIR"/sprints
+mkdir -p "$TARGET_DIR"/templates
+mkdir -p "$TARGET_DIR"/.github/{agents,prompts,instructions,skills}
+mkdir -p "$TARGET_DIR"/scripts
+
+# 2. Archivos placeholder .gitkeep
+touch "$TARGET_DIR"/repositories/API-REST/.gitkeep
+touch "$TARGET_DIR"/repositories/backend/.gitkeep
+touch "$TARGET_DIR"/repositories/frontend/.gitkeep
+touch "$TARGET_DIR"/repositories/mobile/.gitkeep
+touch "$TARGET_DIR"/work/HU-XXX/.gitkeep
+touch "$TARGET_DIR"/sprints/.gitkeep
+
+# 3. Poblar knowledge/ inicial
+if [ -f "$FRAMEWORK_DIR/templates/business-overview.template.md" ]; then
+    cp "$FRAMEWORK_DIR/templates/business-overview.template.md" "$TARGET_DIR/knowledge/business-overview.md"
+else
+    cat << EOF > "$TARGET_DIR/knowledge/business-overview.md"
+# Business Overview & Functional Domain — $CELL_NAME
+- **Domain:** Functional domain of the cell
+- **Target Users:** Web and Mobile consumers
+- **Key Glossary:** Reference terms and definitions
+EOF
+fi
+
+if [ -f "$FRAMEWORK_DIR/templates/team-roster.template.md" ]; then
+    cp "$FRAMEWORK_DIR/templates/team-roster.template.md" "$TARGET_DIR/knowledge/team-roster.md"
+else
+    cat << EOF > "$TARGET_DIR/knowledge/team-roster.md"
+# Team Roster — $CELL_NAME
+- **Lead Architect:** 
+- **Product Owner:** 
+- **Scrum Master:** 
+- **Developers & QA:** 
+EOF
+fi
+
+if [ -f "$FRAMEWORK_DIR/templates/architecture-system-map.template.md" ]; then
+    cp "$FRAMEWORK_DIR/templates/architecture-system-map.template.md" "$TARGET_DIR/knowledge/architecture-system-map.md"
+else
+    cat << EOF > "$TARGET_DIR/knowledge/architecture-system-map.md"
+# Architecture & System Map — $CELL_NAME
+- **Contracts (API-REST):** OpenAPI specifications
+- **Backend Services:** Microservices catalog
+- **Frontend Applications:** Web portals
+- **Mobile Applications:** Android & iOS native apps
+EOF
+fi
+
+if [ -f "$FRAMEWORK_DIR/templates/team-workflow.template.md" ]; then
+    cp "$FRAMEWORK_DIR/templates/team-workflow.template.md" "$TARGET_DIR/knowledge/team-workflow.md"
+else
+    cat << EOF > "$TARGET_DIR/knowledge/team-workflow.md"
+# Team Workflow & Quality Gates — $CELL_NAME
+- **Sprint Duration:** 2 weeks
+- **Branching Model:** GitFlow
+- **Quality Gates:** G1 (DoR) -> G2 (Contracts) -> G3 (PR 4R Review) -> G4 (Deploy)
+EOF
+fi
+
+# 4. Copiar plantillas
+if [ -d "$FRAMEWORK_DIR/templates" ]; then
+    cp -r "$FRAMEWORK_DIR"/templates/* "$TARGET_DIR/templates/" 2>/dev/null || true
+fi
+
+# 5. Copiar .github (instrucciones, agentes, prompts, skills)
+if [ -f "$FRAMEWORK_DIR/.github/copilot-instructions.md" ]; then
+    cp "$FRAMEWORK_DIR/.github/copilot-instructions.md" "$TARGET_DIR/.github/copilot-instructions.md"
+fi
+if [ -d "$FRAMEWORK_DIR/.github/agents" ]; then
+    cp -r "$FRAMEWORK_DIR/.github/agents/"* "$TARGET_DIR/.github/agents/" 2>/dev/null || true
+fi
+if [ -d "$FRAMEWORK_DIR/.github/prompts" ]; then
+    cp -r "$FRAMEWORK_DIR/.github/prompts/"* "$TARGET_DIR/.github/prompts/" 2>/dev/null || true
+fi
+if [ -d "$FRAMEWORK_DIR/.github/instructions" ]; then
+    cp -r "$FRAMEWORK_DIR/.github/instructions/"* "$TARGET_DIR/.github/instructions/" 2>/dev/null || true
+fi
+
+# Sincronizar Agent Skills procedimentales
+if [ -d "$FRAMEWORK_DIR/skills" ]; then
+    cp -r "$FRAMEWORK_DIR"/skills/* "$TARGET_DIR/.github/skills/" 2>/dev/null || true
+elif [ -d "$FRAMEWORK_DIR/.github/skills" ]; then
+    cp -r "$FRAMEWORK_DIR/.github/skills/"* "$TARGET_DIR/.github/skills/" 2>/dev/null || true
+fi
+
+# 6. Copiar scripts de automatización permitidos (sync-onedrive y aff-secret-scan)
+if [ -f "$FRAMEWORK_DIR/scripts/sync-onedrive.sh" ]; then
+    cp "$FRAMEWORK_DIR/scripts/sync-onedrive.sh" "$TARGET_DIR/scripts/sync-onedrive.sh"
+    chmod +x "$TARGET_DIR/scripts/sync-onedrive.sh"
+fi
+if [ -f "$FRAMEWORK_DIR/scripts/aff-secret-scan.sh" ]; then
+    cp "$FRAMEWORK_DIR/scripts/aff-secret-scan.sh" "$TARGET_DIR/scripts/aff-secret-scan.sh"
+    chmod +x "$TARGET_DIR/scripts/aff-secret-scan.sh"
+fi
+
+# 7. Copiar AGENTS.md y documentación
+if [ -f "$FRAMEWORK_DIR/AGENTS.md" ]; then
+    cp "$FRAMEWORK_DIR/AGENTS.md" "$TARGET_DIR/AGENTS.md"
+fi
+if [ "$LANG_CHOICE" = "en" ] && [ -f "$FRAMEWORK_DIR/README.en.md" ]; then
+    cp "$FRAMEWORK_DIR/README.en.md" "$TARGET_DIR/README.md"
+elif [ -f "$FRAMEWORK_DIR/README.md" ]; then
+    cp "$FRAMEWORK_DIR/README.md" "$TARGET_DIR/README.md"
+fi
+
+# 8. Generar <nombre_celula>-cell.code-workspace
+WORKSPACE_FILE="$TARGET_DIR/${CELL_NAME}-cell.code-workspace"
+cat << EOF > "$WORKSPACE_FILE"
+{
+  "folders": [
+    {
+      "name": "🏛️ Hub [$CELL_NAME]",
+      "path": "."
+    },
+    {
+      "name": "📜 API-REST [Contracts]",
+      "path": "repositories/API-REST"
+    },
+    {
+      "name": "⚙️ Backend [Services]",
+      "path": "repositories/backend"
+    },
+    {
+      "name": "🌐 Frontend [Web]",
+      "path": "repositories/frontend"
+    },
+    {
+      "name": "📱 Mobile [Apps]",
+      "path": "repositories/mobile"
+    }
+  ],
+  "settings": {
+    "files.exclude": {
+      "repositories": true,
+      "**/.git": false,
+      "**/.DS_Store": true
+    },
+    "github.copilot.chat.localeOverride": "$LANG_CHOICE"
+  }
+}
+EOF
+
+# 9. Generar <nombre_celula>-cell.config.yaml
+CONFIG_YAML_FILE="$TARGET_DIR/${CELL_NAME}-cell.config.yaml"
+if [ "$LANG_CHOICE" = "es" ]; then
+    FUNC_LANG="Spanish (neutral / professional)"
+    TECH_LANG="English (code, OpenAPI, JSON schemas, Conventional Commits, PR descriptions)"
+else
+    FUNC_LANG="English"
+    TECH_LANG="English"
+fi
+
+cat << EOF > "$CONFIG_YAML_FILE"
+version: "1.0.0"
+
+cell:
+  id: "$CELL_NAME"
+  name: "Célula $CELL_NAME"
+  description: "Workspace y gobierno declarativo de ingeniería para la célula $CELL_NAME"
+
+configuration:
+  language: "$LANG_CHOICE"
+  locale: "$LANG_CHOICE"
+  artifact_generation:
+    functional_documentation: "$FUNC_LANG"
+    technical_artifacts: "$TECH_LANG"
+
+company:
+  client_name: "Empresa Cliente"
+  organization: "Área / Organización"
+  compliance_level: "High / Regulated"
+  vcs_provider: "GitHub / GitLab / Bitbucket"
+  ci_provider: "Jenkins / GitHub Actions / GitLab CI"
+  ticket_manager: "Jira / Azure DevOps"
+
+business:
+  domain: "Dominio funcional de la célula $CELL_NAME"
+  target_users:
+    - "Usuarios Web"
+    - "Usuarios Mobile"
+  core_glossary_ref: "knowledge/business-overview.md"
+
+team:
+  lead_architect: "Líder Técnico / Arquitecto"
+  product_owner: "Product Owner"
+  scrum_master: "Scrum Master"
+  members:
+    - name: "Dev Backend"
+      role: "Backend Lead"
+      layer: "backend"
+    - name: "Dev Frontend"
+      role: "Frontend Lead"
+      layer: "frontend"
+    - name: "Dev Mobile"
+      role: "Mobile Specialist"
+      layer: "mobile"
+    - name: "QA Engineer"
+      role: "QA Automation"
+      layer: "qa"
+
+architecture:
+  layers:
+    - api_rest
+    - backend
+    - frontend
+    - mobile
+  repositories_root: "repositories"
+  repositories:
+    - id: "contracts-api"
+      layer: "API-REST"
+      path: "repositories/API-REST"
+      role: "OpenAPI Specifications (Zero Business Logic)"
+    - id: "backend-services"
+      layer: "backend"
+      path: "repositories/backend"
+      role: "Backend Microservices"
+    - id: "frontend-web"
+      layer: "frontend"
+      path: "repositories/frontend"
+      role: "Web Applications"
+    - id: "mobile-apps"
+      layer: "mobile"
+      path: "repositories/mobile"
+      role: "Mobile Native Applications (Android / iOS)"
+
+workflow:
+  sprint_weeks: 2
+  branching_model: "GitFlow"
+  protected_branches:
+    - main
+    - develop
+  gates:
+    g1_dor: true
+    g2_contract_parity: true
+    g3_pr_review_4r: true
+    g4_deploy: true
+EOF
+
+# 10. Configurar sincronización de OneDrive si fue detectado
+if [ "$ONEDRIVE_FOUND" = true ] && [ -n "$DETECTED_ONEDRIVE_PATH" ]; then
+    TARGET_ONEDRIVE_DIR="$DETECTED_ONEDRIVE_PATH/$CELL_NAME"
+    cat << EOF > "$TARGET_DIR/.onedrive-sync.conf"
+# Auto-generated by aigile-copilot
+OS_TYPE="$DETECTED_OS"
+ONEDRIVE_PATH="$TARGET_ONEDRIVE_DIR"
+EOF
+    echo "  [OK] OneDrive sync configuration saved: $TARGET_DIR/.onedrive-sync.conf"
+    if [ -x "$TARGET_DIR/scripts/sync-onedrive.sh" ]; then
+        (cd "$TARGET_DIR" && ./scripts/sync-onedrive.sh >/dev/null 2>&1 || true)
+        echo "  [OK] Initial sync to OneDrive executed."
+    fi
+fi
+
+# ------------------------------------------------------------------------------
+# 2.9 Resumen Final y Pasos a Seguir
+# ------------------------------------------------------------------------------
+echo ""
+echo "$TXT_SUMMARY_HEADER"
+echo "$TXT_SUMMARY_TITLE"
+echo "$TXT_SUMMARY_HEADER"
+echo ""
+echo "$TXT_WORKSPACE_READY"
+echo "  ==> $TARGET_DIR"
+echo ""
+echo "$TXT_NEXT_STEPS_TITLE"
+echo "  $TXT_STEP_1"
+echo "      code \"$WORKSPACE_FILE\""
+echo ""
+echo "  $TXT_STEP_2"
+echo "      @aff-onboarding /init-cell"
+echo ""
+echo "$TXT_ARTIFACTS_RULES_TITLE"
+echo "  $TXT_ARTIFACTS_RULE_1"
+echo "  $TXT_ARTIFACTS_RULE_2"
+echo "  $TXT_ARTIFACTS_RULE_3"
+echo ""
+echo "$TXT_SUMMARY_HEADER"
+echo ""

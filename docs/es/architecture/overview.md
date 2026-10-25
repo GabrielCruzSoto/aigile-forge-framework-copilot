@@ -81,7 +81,7 @@ En lugar de clonar los repositorios dentro del framework o forzar un monorepo ar
 
 Durante las fases iniciales de adopción, las organizaciones con políticas estrictas de seguridad o control de cambios prohíben commitear tooling local o archivos de configuración de IA en repositorios compartidos.
 
-Para resolver esto, el script [`setup-framework.sh`](file:///home/gabrielcruzsoto/Proyectos/Tools_Agents/projects/aigile-forge-framework-copilot/scripts/setup-framework.sh) inyecta reglas de exclusión en `.git/info/exclude` de cada repositorio conectado. A diferencia de un archivo `.gitignore`, `.git/info/exclude` **nunca se commitea ni se envía al servidor remoto**, manteniendo el trabajo del agente 100% privado en la máquina del desarrollador.
+Para resolver esto, el asistente [`aigile-copilot`](file:///home/gabrielcruzsoto/Proyectos/Tools_Agents/projects/aigile-forge-framework-copilot/aigile-copilot) inyecta reglas de exclusión en `.git/info/exclude` de cada repositorio conectado. A diferencia de un archivo `.gitignore`, `.git/info/exclude` **nunca se commitea ni se envía al servidor remoto**, manteniendo el trabajo del agente 100% privado en la máquina del desarrollador.
 
 ---
 
@@ -135,9 +135,8 @@ aigile-forge-framework-copilot/
 │   ├── prompts/                # Comandos de chat (/slash)
 │   ├── instructions/           # Instrucciones contextuales del workspace
 │   └── skills/                 # Espejo de skills accesible para Copilot
+├── aigile-copilot              # Asistente CLI unificado de diagnóstico y scaffolding
 └── scripts/                    # Scripts multiplataforma de automatización y gobierno
-    ├── install-dependencies.sh # Verificación del entorno local
-    ├── setup-framework.sh      # Inicialización del workspace y exclusiones
     ├── sync-onedrive.sh        # Sincronización documental con OneDrive
     └── aff-secret-scan.sh      # Auditoría local de seguridad pre-commit
 ```

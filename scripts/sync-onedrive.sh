@@ -143,6 +143,14 @@ if [ "$DRY_RUN" = false ]; then
             cp -p "$BASE_DIR/$file" "$TARGET_DIR/$file" 2>/dev/null || true
         fi
     done
+
+    # Sync any custom cell manifests (*-cell.config.yaml and *-cell.code-workspace)
+    for f in "$BASE_DIR"/*-cell.config.yaml "$BASE_DIR"/*-cell.code-workspace; do
+        if [ -f "$f" ]; then
+            cp -p "$f" "$TARGET_DIR/$(basename "$f")" 2>/dev/null || true
+        fi
+    done
+
     date -u +"%Y-%m-%dT%H:%M:%SZ" > "$TARGET_DIR/.last-sync-timestamp" 2>/dev/null || true
 fi
 

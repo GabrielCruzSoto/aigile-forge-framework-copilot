@@ -23,27 +23,23 @@ git clone <URL_REPOSITORIO_AFF_COPILOT> aigile-forge-framework-copilot
 cd aigile-forge-framework-copilot
 ```
 
-### Paso 2: Verificar Dependencias Locales
-Ejecuta el script de diagnóstico para verificar que tu máquina cuenta con las herramientas necesarias:
+### Paso 2: Inicializar y Scaffoldear con `aigile-copilot`
+Ejecuta el asistente interactivo unificado para verificar el entorno y scaffoldear el workspace de la célula:
 ```bash
-./scripts/install-dependencies.sh
+./aigile-copilot
 ```
-El script detectará automáticamente tu sistema operativo (Linux, macOS o Windows mediante Git Bash/MSYS2) y comprobará la presencia de `git`, `bash`, `code`, `sed`, `grep` y extensiones de VS Code.
-
-### Paso 3: Inicializar o Crear el Workspace del Agente
-Ejecuta el script de configuración indicando la **ruta obligatoria** donde se creará o configurará el workspace:
+O ejecutándolo de forma directa con parámetros:
 ```bash
-# Para configurar el workspace en el directorio actual:
-./scripts/setup-framework.sh .
-
-# O para scaffoldear un nuevo workspace en otra ruta (ej. nueva célula):
-./scripts/setup-framework.sh /ruta/al/nuevo-workspace
+./aigile-copilot --lang es --name mi-celula --workspace /ruta/al/nuevo-workspace
 ```
 Este script realiza las siguientes acciones críticas:
-1. Crea la estructura completa de carpetas de trabajo (`knowledge/`, `work/`, `sprints/`, `archive/`, `templates/`).
-2. Scaffoldea y copia `.github/` (agentes, prompts, instrucciones) y `cell.code-workspace` si la ruta destino es externa.
-3. Sincroniza y valida todas las **13 Agent Skills** hacia `.github/skills/`.
-4. Configura el aislamiento en `.git/info/exclude` (cero huella remota).
+1. Permite seleccionar el idioma de trabajo y generación de artefactos (Español o Inglés).
+2. Detecta el Sistema Operativo (Linux, macOS, Windows).
+3. Comprueba las herramientas necesarias (`git`, `code`, `mvn`, `node`, `npm`, `rsync`) y muestra instrucciones de instalación en caso de faltar alguna.
+4. Detecta OneDrive Desktop y configura el respaldo en la nube para documentación (cero código).
+5. Verifica la presencia de la extensión de GitHub Copilot en VS Code.
+6. Scaffoldea la estructura completa del workspace con paridad de canales (`repositories/API-REST`, `backend`, `frontend`, `mobile`, `knowledge/`, `work/`, `sprints/`, `templates/` y `.github/`).
+7. Configura `<nombre_celula>-cell.code-workspace` y `<nombre_celula>-cell.config.yaml`.
 
 *(Opcional: Si tu organización requiere respaldar la documentación de la célula en OneDrive, consulta la [Guía de Seguridad y Sincronización](../governance/security-and-sync.md)).*
 
